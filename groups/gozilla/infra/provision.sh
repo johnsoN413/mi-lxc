@@ -11,8 +11,16 @@ systemctl stop systemd-resolved
 
 # manage gozilla.milxc zone
 apt-get update
-DEBIAN_FRONTEND=noninteractive apt-get install -y unbound
-cp dns.conf /etc/unbound/unbound.conf.d/
+DEBIAN_FRONTEND=noninteractive apt-get install -y nsd 
+
+# DNS server
+echo -e "zone:
+	name: \"gozilla.milxc.\"
+	zonefile: \"gozilla.milxc.zone\"
+" > /etc/nsd/nsd.conf
+
+# cp dns.conf /etc/unbound/unbound.conf.d/
+cp dns.conf /etc/nsd/gozilla.milxc.zone
 
 
 # Script to add a cert to the CA/Browser consortium
