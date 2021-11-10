@@ -17,5 +17,13 @@ systemctl stop systemd-resolved
 
 # manage isp-a.milxc zone
 apt-get update
-DEBIAN_FRONTEND=noninteractive apt-get install -y unbound
-cp dns.conf /etc/unbound/unbound.conf.d/
+DEBIAN_FRONTEND=noninteractive apt-get install -y nsd
+
+# DNS server
+echo -e "zone:
+	name: \"isp-a.milxc.\"
+	zonefile: \"isp-a.milxc.zone\"
+" > /etc/nsd/nsd.conf
+
+cp dns.conf /etc/nsd/isp-a.milxc.zone
+
