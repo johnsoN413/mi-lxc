@@ -44,8 +44,8 @@
 }],
   "groups": {
     "transit-a": {
-      "templates":[{"template":"as-bgp", "asn":"30", "neighbors4":"100.64.0.10 as 10;100.64.0.30 as 7;100.64.0.40 as 8; 100.64.0.2 as 31; 100.64.0.20 as 6; 100.64.0.50 as 13",
-                  "neighbors6":"2001:db8:b000::10 as 10; 2001:db8:b000::30 as 7;2001:db8:b000::40 as 8; 2001:db8:b000::2 as 31; 2001:db8:b000::20 as 6; 2001:db8:b000::50 as 13",
+      "templates":[{"template":"as-bgp", "asn":"30", "neighbors4":"100.64.0.10 as 10;100.64.0.30 as 7;100.64.0.40 as 8; 100.64.0.60 as 14; 100.64.0.2 as 31; 100.64.0.20 as 6; 100.64.0.50 as 13",
+                  "neighbors6":"2001:db8:b000::10 as 10; 2001:db8:b000::30 as 7;2001:db8:b000::40 as 8; 2001:db8:b000::60 as 14; 2001:db8:b000::2 as 31; 2001:db8:b000::20 as 6; 2001:db8:b000::50 as 13",
       "interfaces":[
         {"bridge":"nat-bridge", "ipv4":"dhcp"},
         {"bridge":"transit-a", "ipv4":"100.64.0.1/24", "ipv6":"2001:db8:b000::1/48"}
@@ -122,11 +122,19 @@
       ]
     }]},
     "milxc": {
-      "templates":[{"template":"as-bgp", "asn":"8", "asdev":"eth1", "neighbors4":"100.64.0.1 as 30","neighbors6":"2001:db8:b000::1 as 30",
+      "templates":[{"template":"as-bgp", "asn":"8w", "asdev":"eth1", "neighbors4":"100.64.0.1 as 30","neighbors6":"2001:db8:b000::1 as 30",
       "interfaces":[
         {"bridge":"transit-a", "ipv4":"100.64.0.40/24", "ipv6":"2001:db8:b000::40/48"},
         {"bridge":"milxc-lan", "ipv4":"100.100.20.1/24", "ipv6":"2001:db8:a020::1/48"}
       ]
-    }]}
+    }]},
+	"gcorp": {
+  	  "templates":[{"template":"as-bgp", "asn":"14", "asdev":"eth1;eth2", "neighbors4":"100.64.0.1 as 30","neighbors6":"2001:db8:b000::1 as 30",
+      "interfaces":[
+    	{"bridge":"transit-a", "ipv4":"100.64.0.60/24", "ipv6":"2001:db8:b000::60/48"},
+    	{"bridge":"gcorp-lan", "ipv4":"100.84.0.1/24", "ipv6":"2001:db8:84:0::1/48"},
+		{"bridge":"gcorp-infra", "ipv4":"100.84.1.1/24", "ipv6":"2001:db8:84:1::1/48"}
+ 	  ]
+ 	}]}
   }
 }
