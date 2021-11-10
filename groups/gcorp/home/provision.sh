@@ -15,4 +15,5 @@ DEBIAN_FRONTEND=noninteractive apt-get install -y python3-requests
 #ln -sf /home/debian/background.jpg /usr/share/images/desktop-base/default
 #ln -sf /home/debian/background.jpg /etc/alternatives/desktop-background
 
+mkdir /home/home
 
