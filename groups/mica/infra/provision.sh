@@ -15,10 +15,17 @@ addgroup ca mail
 echo "DNSStubListener=no" >> /etc/systemd/resolved.conf
 systemctl stop systemd-resolved
 
-# manage isp-a.milxc zone
+# manage mica.milxc zone
 apt-get update
-DEBIAN_FRONTEND=noninteractive apt-get install -y unbound
-cp dns.conf /etc/unbound/unbound.conf.d/
+DEBIAN_FRONTEND=noninteractive apt-get install -y nsd 
+
+# DNS server
+echo -e "zone:
+	name: \"mica.milxc.\"
+	zonefile: \"mica.milxc.zone\"
+" > /etc/nsd/nsd.conf
+
+cp dns.conf /etc/nsd/mica.milxc.zone
 
 
 # Install smallstep CA / ACME server
