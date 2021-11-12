@@ -27,7 +27,13 @@ echo -e "zone:
 	zonefile: \"ecorp.milxc.zone\"
 " > /etc/nsd/nsd.conf
 
-cp dns.conf /etc/nsd/ecorp.milxc.zone
+echo -e "zone:
+	name: \"target.milxc.\"
+	zonefile: \"target.milxc.zone\"
+" >> /etc/nsd/nsd.conf
+
+cp dns-target.conf /etc/nsd/target.milxc.zone
+cp dns-ecorp.conf /etc/nsd/ecorp.milxc.zone
 
 
 cp index.html /var/www/html/
