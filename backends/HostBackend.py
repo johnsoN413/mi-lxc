@@ -30,6 +30,9 @@ class Host:
     def renet(self):
         pass
 
+    def mail(self):
+        pass
+
     def exists(self):
         pass
 
