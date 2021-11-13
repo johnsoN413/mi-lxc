@@ -314,20 +314,34 @@ def renetInfra():
             host.renet()
     print("Infrastructure reneted successfully !")
 
-def sendMail():
+def mail():
     for host in hosts:
         if host is None:
-            print("Unexisting container " + container + ", valid containers are " + listHosts(), file=sys.stderr) # a réécrire
+            print("Unexisting container " + host.name + ", valid containers are " + listHosts(), file=sys.stderr) # a réécrire
             exit(1)
         if not host.isRunning():
-            print("Container " + container + " is not running. You need to run \"./mi-lxc.py start\" before sending mails", file=sys.stderr)
+            print("Container " + host.name + " is not running. You need to run \"./mi-lxc.py start\" before sending mails", file=sys.stderr)
             exit(1)
         if not host.exists():
             print("Host " + host.name + " does not exist", file=sys.stderr) # a réécrire
             exit(1)
         else:
-            host.mail()
+            host.mail("send")
     print("Mail sent successfully")
+    
+    for host in hosts:
+        if host is None:
+            print("Unexisting container " + host.name + ", valid containers are " + listHosts(), file=sys.stderr) # a réécrire
+            exit(1)
+        if not host.isRunning():
+            print("Container " + host.name + " is not running. You need to run \"./mi-lxc.py start\" before sending mails", file=sys.stderr)
+            exit(1)
+        if not host.exists():
+            print("Host " + host.name + " does not exist", file=sys.stderr) # a réécrire
+            exit(1)
+        else:
+            host.mail("receive")
+    print("Mail receive successfully")
 
 def destroyInfra():
     for host in hosts:
@@ -589,7 +603,7 @@ if __name__ == '__main__':
     elif (command == "renet"):
         renetInfra()
     elif (command == "mail"):
-        sendMail()
+        mail()
     else:
         usage()
         exit(1)
