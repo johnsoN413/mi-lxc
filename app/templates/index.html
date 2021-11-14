@@ -1,13 +1,59 @@
 {% extends "base.html" %}
 
-<div class="row">
-  <div class="col-xs-6 col-sm-6 col-md-4">.col-xs-6 .col-sm-6 .col-md-8</div>
-  <div class="col-xs-6 col-md-4">.col-xs-6 .col-md-4</div>
-</div>
-<div class="row">
-  <div class="col-xs-6 col-sm-4">.col-xs-6 .col-sm-4</div>
-  <div class="col-xs-6 col-sm-4">.col-xs-6 .col-sm-4</div>
-  <!-- Optional: clear the XS cols if their content doesn't match in height -->
-  <div class="clearfix visible-xs-block"></div>
-  <div class="col-xs-6 col-sm-4">.col-xs-6 .col-sm-4</div>
-</div>
+{% block app_content %}
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">Repas</th>
+      <th scope="col">Lundi</th>
+      <th scope="col">Mardi</th>
+      <th scope="col">Mercredi</th>
+      <th scope="col">Jeudi</th>
+      <th scope="col">Vendredi</th>
+      <th scope="col">Samedi</th>
+      <th scope="col">Dimanche</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">Midi</th>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <th scope="row">Soir</th>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">Ingrédients</th>
+      <th scope="col">Stock</th>
+    </tr>
+  </thead>
+  {% if ingredients %}
+  <tbody>
+    {% for ingredient in ingredients %}
+    <tr>
+        <th scope="row">{{ ingredient.getName() }}</th>
+        <td>{{ ingredient.getStock() }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+  {% endif %}
+</table>
+{% endblock %}

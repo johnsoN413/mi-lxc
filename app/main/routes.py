@@ -1,5 +1,7 @@
 from app.main import bp
-from flask import render_template
+from flask import render_template, url_for, redirect
+
+from app.main.forms import AddRecette
 
 @bp.route('/', methods=['GET','POST'])
 @bp.route('/index', methods=['GET','POST'])
@@ -16,7 +18,11 @@ def edit_recette(recettename):
 
 @bp.route('/recette/newrecette')
 def add_recette():
-    return render_template('recette.html')
+    form = AddRecette()
+    if form.validate_on_submit():
+        flash('Recette ajoutée !')
+        return redirect(url_for('main.index'))
+    return render_template('recette.html',form=form)
 
 @bp.route('/planning')
 def modify_planning():
