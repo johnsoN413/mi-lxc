@@ -31,3 +31,12 @@ On peut naviguer de semaine en semaine.
 On peut modifier le programme ce qui emmene sur la page planning
 Une page ajouter un ingrédient
 Une page ajouter une recette
+
+# Aide
+
+Il faut utiliser un environnement virtuel et utiliser la commande :
+
+```bash
+pip install -r requirements.txt 
+```
+
