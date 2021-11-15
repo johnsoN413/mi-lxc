@@ -7,7 +7,7 @@ class AddIngredientForm(FlaskForm):
     cost = DecimalField('Coût',default=0.0)
     submit = SubmitField('Ajouter')
 
-class AddRecette(FlaskForm):
+class AddRecetteForm(FlaskForm):
     name = StringField('Nom', validators = [DataRequired()])
     ingredients = FieldList(StringField('Ingredient', validators=[DataRequired()]))
     submit = SubmitField("Terminer la recette")
