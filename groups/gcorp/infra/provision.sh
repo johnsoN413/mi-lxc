@@ -19,3 +19,7 @@ DEBIAN_FRONTEND=noninteractive apt-get install -y nsd
 cp dns.conf /etc/nsd/gcorp.milxc.zone
 
 
+echo -e "zone:
+	name: \"gcorp.milxc.\"
+	zonefile: \"gcorp.milxc.zone\"
+" > /etc/nsd/nsd.conf
