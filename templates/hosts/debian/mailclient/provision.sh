@@ -14,10 +14,6 @@ if [ -z $login ] ; then
   login="debian"
 fi
 
-if [ ! -d "/home/$login" ];then
-mkdir /home/$login
-fi
-
 
 cp -ar claws-mail /home/$login/.claws-mail
 #chown -R $login /home/$login/.claws-mail

@@ -19,7 +19,7 @@
           "gatewayv4":"100.84.0.1",
 		  "gatewayv6":"2001:db8:84:0::1",
           "templates":[
-            {"template":"mailclient","domain":"gcorp.milxc","mailname":"home","password":"home","login":"home"},
+            {"template":"mailclient","domain":"gcorp.milxc","mailname":"home","password":"home"},
 			{"template":"nodhcp", "domain":"gcorp.milxc", "ns":"100.100.100.100"},
             {"template":"updatecaroots"}]}
   }

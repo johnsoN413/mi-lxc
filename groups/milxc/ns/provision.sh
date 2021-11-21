@@ -45,4 +45,7 @@ ns.ecorp.milxc.	IN	AAAA 2001:db8:81::2
 gozilla.milxc.	IN	NS	ns.gozilla.milxc.
 ns.gozilla.milxc.	IN	A 100.83.0.2
 ns.gozilla.milxc.	IN	AAAA 2001:db8:83::2
+gcorp.milxc.		IN	NS	ns.gcorp.milxc.
+ns.gcorp.milxc.	IN	A 100.84.1.2
+ns.gcorp.milxc.	IN	AAAA 2001:db8:84:1::2
 " >> /etc/nsd/milxc.zone
