@@ -1,6 +1,9 @@
 {
   "comment":"ISP-A AS",
   "containers": {
+    "router":{
+        "templates":[{"template":"resolverns"}],
+        "master":"alpine"},
     "infra":
         {"container":"infra",
           "interfaces":[
@@ -11,7 +14,7 @@
           "templates":[
             {"template":"mailserver", "domain":"isp-a.milxc"},
             {"template":"nodhcp", "domain":"isp-a.milxc", "ns":"100.100.100.100"}]},
-          "home":{"container":"home",
+    "home":{"container":"home",
             "interfaces":[
               {"bridge":"cust", "ipv4":"100.120.0.3/24", "ipv6":"2001:db8:120:0::3/64"}
             ],
