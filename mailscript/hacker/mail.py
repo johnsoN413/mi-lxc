@@ -1,21 +1,18 @@
 import imaplib
 import smtplib
 from email.utils import formatdate
+from email.mime.text import MIMEText
 
 def send_mail(smtpServ, fromaddr, toaddrs, subject, body):
     server = smtplib.SMTP()
     server.connect(smtpServ)
     server.helo() 
-    msg = """\
-    From: %s\r\n\
-    To: %s\r\n\
-    Subject: %s\r\n\
-    Date: %s\r\n\
-    \r\n\
-    %s
-    """ % (fromaddr, ", ".join(toaddrs), subject, formatdate(localtime=True), body)
+    msg = MIMEText(body)
+    msg['Subject'] = subject
+    msg['From'] = fromaddr
+    msg['To'] = ", ".join(toaddrs)
     try:
-        server.sendmail(fromaddr, toaddrs, msg)
+        server.sendmail(fromaddr, toaddrs, msg.as_string())
     except smtplib.SMTPException as e:
         print(e)
     server.quit()
