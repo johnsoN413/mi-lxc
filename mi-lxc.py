@@ -314,6 +314,34 @@ def renetInfra():
             host.renet()
     print("Infrastructure reneted successfully !")
 
+def mail():
+    for host in hosts:
+        if host is None:
+            print("Unexisting container " + host.name + ", valid containers are " + listHosts(), file=sys.stderr) # a réécrire
+            exit(1)
+        if not host.isRunning():
+            print("Container " + host.name + " is not running. You need to run \"./mi-lxc.py start\" before sending mails", file=sys.stderr)
+            exit(1)
+        if not host.exists():
+            print("Host " + host.name + " does not exist", file=sys.stderr) # a réécrire
+            exit(1)
+        else:
+            host.mail("send")
+    print("Mail sent successfully")
+    
+    for host in hosts:
+        if host is None:
+            print("Unexisting container " + host.name + ", valid containers are " + listHosts(), file=sys.stderr) # a réécrire
+            exit(1)
+        if not host.isRunning():
+            print("Container " + host.name + " is not running. You need to run \"./mi-lxc.py start\" before sending mails", file=sys.stderr)
+            exit(1)
+        if not host.exists():
+            print("Host " + host.name + " does not exist", file=sys.stderr) # a réécrire
+            exit(1)
+        else:
+            host.mail("receive")
+    print("Mail receive successfully")
 
 def destroyInfra():
     for host in hosts:
@@ -415,6 +443,7 @@ def usage():
 ./mi-lxc.py should be followed by:
     create [name]                    creates the [name] container, defaults to create all containers
     renet                            renets all the containers
+    mail                             send mails between those who can (in dev)
     destroy [name]                   destroys the [name] container, defaults to destroy all containers
     destroymaster                    destroys all the master containers
     updatemaster                     updates all the master containers
@@ -573,6 +602,8 @@ if __name__ == '__main__':
         printgraph()
     elif (command == "renet"):
         renetInfra()
+    elif (command == "mail"):
+        mail()
     else:
         usage()
         exit(1)
