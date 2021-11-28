@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # Root NS template
 set -e
 if [ -z $MILXCGUARD ] ; then exit 1; fi
@@ -22,18 +22,11 @@ P.ROOT-SERVERS.NET.      3600000      AAAA     2001:db8:a001::10
 #echo -e "server:
 #	ip-address: 127.0.0.1
 echo -e "server:
-	root-hints: root.hints
-" > /etc/unbound/unbound.conf.d/root.conf
-
-# no DNSSEC validation for now
-sed -i "s/auto/\#auto/" /etc/unbound/unbound.conf.d/root-auto-trust-anchor-file.conf
-
-# Be an open dns resolver -- TO CHANGE LATER
-echo -e "server:
+	root-hints: /etc/unbound/root.hints
 	interface: 0.0.0.0
-  access-control: 0.0.0.0/0 allow
+    access-control: 0.0.0.0/0 allow
 	cache-max-ttl: 20
 	cache-max-negative-ttl: 20
-" > /etc/unbound/unbound.conf.d/listen.conf
+" > /etc/unbound/unbound.conf
 
 service unbound restart
