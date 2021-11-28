@@ -1,6 +1,9 @@
 {
-  "comment": "ISP-A AS",
+  "comment":"ISP-A AS",
   "containers": {
+    "router":{
+        "templates":[{"template":"resolverns"}],
+        "master":"alpine"},
     "infra":
         {"container":"infra",
           "interfaces":[
@@ -10,21 +13,22 @@
           "gatewayv6":"2001:db8:120:1::1",
           "templates":[
             {"template":"mailserver", "domain":"isp-a.milxc"},
-            {"template":"resolverns"},
-            {"template":"nodhcp", "domain":"isp-a.milxc", "ns":"100.120.1.2"}]},
-          "home":{"container":"home",
+            {"template":"nodhcp", "domain":"isp-a.milxc", "ns":"100.100.100.100"}]},
+    "home":{"container":"home",
             "interfaces":[
-              {"bridge":"cust", "ipv4":"100.120.0.3/24"}
+              {"bridge":"cust", "ipv4":"100.120.0.3/24", "ipv6":"2001:db8:120:0::3/64"}
             ],
             "gatewayv4":"100.120.0.1",
-            "templates":[{"template":"nodhcp", "domain":"isp-a.milxc", "ns":"100.120.1.2"},
+            "gatewayv6":"2001:db8:120:0::1",
+            "templates":[{"template":"nodhcp", "domain":"isp-a.milxc", "ns":"100.100.100.100"},
                         {"template":"updatecaroots"}]},
           "hacker":{"container":"hacker",
             "interfaces":[
-              {"bridge":"cust", "ipv4":"100.120.0.4/24"}
+              {"bridge":"cust", "ipv4":"100.120.0.4/24", "ipv6":"2001:db8:120:0::4/64"}
             ],
             "gatewayv4":"100.120.0.1",
+            "gatewayv6":"2001:db8:120:0::1",
             "templates":[{"template":"mailclient", "domain":"isp-a.milxc", "mailname":"hacker", "password":"hacker"},
-                    {"template":"nodhcp", "domain":"isp-a.milxc", "ns":"100.120.1.2"}]}
+                    {"template":"nodhcp", "domain":"isp-a.milxc", "ns":"100.100.100.100"}]}
   }
 }
