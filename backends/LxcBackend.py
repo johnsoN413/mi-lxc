@@ -224,8 +224,7 @@ class LxcHost(LxcBackend, Host):
                 print("\033[31mMail of  " + path + " failed (" + str(ret) + "), exiting...\033[0m")
                 exit(1)
         except FileNotFoundError:
-            print("No mail to send with " + filesdir)
-
+            pass
 
     def renet(self):
         c = self.getContainer()
