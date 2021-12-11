@@ -1,6 +1,7 @@
 import imaplib
 import smtplib
 from email.utils import formatdate
+from email.mime.text import MIMEText
 
 def send_mail(smtpServ, fromaddr, toaddrs, subject, body):
     server = smtplib.SMTP()
@@ -25,7 +26,7 @@ def receive_mails(smtpServ, login, password):
         print("ErrorType : {}, Error : {}".format(type(e).__name__, e))
         imap = None
 
-    imap.login("hacker", "hacker")
+    imap.login("user", "user")
     imap.select()
     typ, data = imap.search(None, 'ALL')
     data_idx=data[0].split()

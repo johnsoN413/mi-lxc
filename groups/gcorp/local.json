@@ -13,18 +13,16 @@
         "gatewayv6":"2001:db8:84:1::1",
         "templates":[
             {"template":"mailserver", "domain":"gcorp.milxc"},
-            {"template":"nodhcp", "domain":"gcorp.milxc", "ns":"100.100.100.100"}
-        ]
-    },
-    "home":{
-        "container":"home",
-        "interfaces":[
-            {"bridge":"lan", "ipv4":"100.84.0.2/24", "ipv6":"2001:db8:84:0::2/48"}
-        ],
-        "gatewayv4":"100.84.0.1",
-		"gatewayv6":"2001:db8:84:0::1",
-        "templates":[
-            {"template":"mailclient","domain":"gcorp.milxc","mailname":"home","password":"home"},
+            {"template":"nodhcp", "domain":"gcorp.milxc", "ns":"100.100.100.100"}]},
+	"user":
+		{"container":"user",
+          "interfaces":[
+              {"bridge":"lan", "ipv4":"100.84.0.2/24", "ipv6":"2001:db8:84:0::2/48"}
+           ],
+          "gatewayv4":"100.84.0.1",
+		  "gatewayv6":"2001:db8:84:0::1",
+          "templates":[
+            {"template":"mailclient","domain":"gcorp.milxc","mailname":"user","password":"user"},
 			{"template":"nodhcp", "domain":"gcorp.milxc", "ns":"100.100.100.100"},
             {"template":"updatecaroots"}
             ]
