@@ -5,6 +5,10 @@ if [ -z $MILXCGUARD ] ; then exit 1; fi
 DIR=`dirname $0`
 cd `dirname $0`
 
+apt-get update
+DEBIAN_FRONTEND=noninteractive apt-get install -y python3
+DEBIAN_FRONTEND=noninteractive apt-get install -y python3-requests
+
 # systemctl set-default graphical.target
 
 # DEBIAN_FRONTEND=noninteractive apt-get install -y thunderbird
