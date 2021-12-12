@@ -1,7 +1,11 @@
 import imaplib
 import smtplib
+import email
+from email.parser import BytesParser, Parser
+from email.policy import default
 from email.utils import formatdate
 from email.mime.text import MIMEText
+
 
 def send_mail(smtpServ, fromaddr, toaddrs, subject, body):
     server = smtplib.SMTP()
@@ -19,20 +23,38 @@ def send_mail(smtpServ, fromaddr, toaddrs, subject, body):
     return
 
 
-def receive_mails(smtpServ, login, password):
+def receive_mails(smtpServ, login, password, list_received):
     try:
-        imap = imaplib.IMAP4(host="imap.isp-a.milxc", port=143)
+        imap = imaplib.IMAP4(host=smtpServ, port=143)
     except Exception as e:
         print("ErrorType : {}, Error : {}".format(type(e).__name__, e))
         imap = None
 
-    imap.login("hacker", "hacker")
-    imap.select()
-    typ, data = imap.search(None, 'ALL')
-    data_idx=data[0].split()
-    num=data_idx[-1];
-    typ, data = imap.fetch(num, '(RFC822)')
-    imap.close()
-    imap.logout()
-    return(data)
+    imap.login(login, password)
+    imap.select('INBOX')
+    status, messages = imap.search(None, "ALL")
+    if messages==[b'']:
+        exit()
+    messages = messages[0].split(b' ')
+    headers = []
+    for mail in messages:
+        _, msg = imap.fetch(mail, "(RFC822)")
+        for response in msg:
+            if isinstance(response, tuple):
+                msg = email.message_from_bytes(response[1])
+                headers.append(Parser(policy=default).parsestr(str(msg))["subject"])
+        imap.store(mail, "+FLAGS", "\\Deleted")
 
+    imap.expunge()
+    # close the mailbox
+    imap.close()
+    # logout from the account
+    imap.logout()
+    res = ""
+    for subject in list_received :
+        if subject in headers :
+            res += "{} : reçu\n".format(subject)
+        else :
+            res += "{} : non reçu\n".format(subject)
+    print(res)
+			

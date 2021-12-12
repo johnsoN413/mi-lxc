@@ -9,6 +9,7 @@ import re
 import ipaddress
 import pprint
 from backends import LxcBackend, DynamipsBackend
+from time import sleep
 
 
 def flushArp():
@@ -327,8 +328,10 @@ def mail():
             exit(1)
         else:
             host.mail("send")
-    print("Mail sent successfully")
-    
+
+    print("En attente de la réception des mails...")
+    sleep(30)
+
     for host in hosts:
         if host is None:
             print("Unexisting container " + host.name + ", valid containers are " + listHosts(), file=sys.stderr) # a réécrire
@@ -341,7 +344,6 @@ def mail():
             exit(1)
         else:
             host.mail("receive")
-    print("Mail receive successfully")
 
 def destroyInfra():
     for host in hosts:

@@ -8,7 +8,6 @@ import ipaddress
 import os
 import sys
 
-
 def getInterpreter(file):
     script = open(file)
     first = script.readline()
