@@ -29,6 +29,7 @@ def receive_mails(smtpServ, login, password, list_received):
     except Exception as e:
         print("ErrorType : {}, Error : {}".format(type(e).__name__, e))
         imap = None
+        return 
 
     imap.login(login, password)
     imap.select('INBOX')
