@@ -10,6 +10,21 @@ import ipaddress
 import pprint
 from backends import LxcBackend, DynamipsBackend
 from time import sleep
+import threading
+import random
+
+
+class MailThread (threading.Thread):
+    def __init__(self, host, event, mailToken, cmd):
+        threading.Thread.__init__(self)
+        self.host = host
+        self.event = event
+        self.mailToken = mailToken
+        self.cmd = cmd
+
+    def run(self):
+        self.host.mail(self.cmd, self.mailToken)
+        self.event.set()
 
 
 def flushArp():
@@ -316,6 +331,8 @@ def renetInfra():
     print("Infrastructure reneted successfully !")
 
 def mail():
+    mailToken = str(random.random())[2:]
+    events = []
     for host in hosts:
         if host is None:
             print("Unexisting container " + host.name + ", valid containers are " + listHosts(), file=sys.stderr) # a réécrire
@@ -327,10 +344,14 @@ def mail():
             print("Host " + host.name + " does not exist", file=sys.stderr) # a réécrire
             exit(1)
         else:
-            host.mail("send")
+            event = threading.Event()
+            event.clear()
+            events.append(event)
+            m = MailThread(host, event, mailToken, "send")
+            m.start()
 
-    print("En attente de la réception des mails...")
-    sleep(30)
+    for event in events :
+        event.wait()
 
     for host in hosts:
         if host is None:
@@ -343,7 +364,14 @@ def mail():
             print("Host " + host.name + " does not exist", file=sys.stderr) # a réécrire
             exit(1)
         else:
-            host.mail("receive")
+            event = threading.Event()
+            event.clear()
+            events.append(event)
+            m = MailThread(host, event, mailToken, "receive")
+            m.start()
+
+    for event in events :
+        event.wait()
 
 def destroyInfra():
     for host in hosts:

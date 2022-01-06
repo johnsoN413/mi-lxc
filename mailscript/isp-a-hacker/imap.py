@@ -1,10 +1,10 @@
 #!/usr/bin/python3
 
+import os
 from mail import receive_mails
 
-hacker_subjects = ['Test 1 source = hacker', 'Test 2 source = hacker', 'Test 4 source = hacker', 'Test 5 source = hacker']
+token =  os.environ.get('MAILTOKEN')
 
-print("------------------------------")
-print("Mails received to isp-a-hacker")
+hacker_subjects = [token+' Test 1 source = hacker', token+' Test 2 source = hacker', token+' Test 4 source = hacker', token+' Test 5 source = hacker']
 
-mails = receive_mails("imap.isp-a.milxc", "hacker", "hacker", hacker_subjects)
+mails = receive_mails("imap.isp-a.milxc", "hacker", "hacker", hacker_subjects, "isp-a-hacker")

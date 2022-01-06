@@ -1,10 +1,11 @@
 #!/usr/bin/python3
 
+import os
 from mail import receive_mails
 
-user_subjects = ['Test 1 source = user', 'Test 2 source = user', 'Test 4 source = user', 'Test 5 source = user']
+token =  os.environ.get('MAILTOKEN')
 
-print("-----------------------------")
-print("Mails received to gcorp-user :")
+user_subjects = [token+' Test 1 source = user', token+' Test 2 source = user', token+' Test 4 source = user', token+' Test 5 source = user']
 
-mails = receive_mails("imap.gcorp.milxc", "user", "user", user_subjects)
+
+mails = receive_mails("imap.gcorp.milxc", "user", "user", user_subjects, "gcorp-user")

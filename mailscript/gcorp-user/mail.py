@@ -5,6 +5,15 @@ from email.parser import BytesParser, Parser
 from email.policy import default
 from email.utils import formatdate
 from email.mime.text import MIMEText
+import time
+
+
+
+def checked(dic) :
+    for value in dic.values() :
+        if not value :
+            return False
+    return True
 
 
 def send_mail(smtpServ, fromaddr, toaddrs, subject, body):
@@ -23,7 +32,10 @@ def send_mail(smtpServ, fromaddr, toaddrs, subject, body):
     return
 
 
-def receive_mails(smtpServ, login, password, list_received):
+def receive_mails(smtpServ, login, password, list_received, dst):
+    dic_received = {}
+    for key in list_received :
+        dic_received[key] = False
     try:
         imap = imaplib.IMAP4(host=smtpServ, port=143)
     except Exception as e:
@@ -32,29 +44,31 @@ def receive_mails(smtpServ, login, password, list_received):
 
     imap.login(login, password)
     imap.select('INBOX')
-    status, messages = imap.search(None, "ALL")
-    if messages==[b'']:
-        exit()
-    messages = messages[0].split(b' ')
-    headers = []
-    for mail in messages:
-        _, msg = imap.fetch(mail, "(RFC822)")
-        for response in msg:
-            if isinstance(response, tuple):
-                msg = email.message_from_bytes(response[1])
-                headers.append(Parser(policy=default).parsestr(str(msg))["subject"])
-        imap.store(mail, "+FLAGS", "\\Deleted")
-
+    t = time.time()
+    while (not checked(dic_received)) and (time.time()-t)<30 :
+        
+        status, messages = imap.search(None, "ALL")
+        messages = messages[0].split(b' ')
+        
+        for mail in messages:
+            _, msg = imap.fetch(mail, "(RFC822)")
+            for response in msg:
+                if isinstance(response, tuple):
+                    msg = email.message_from_bytes(response[1])
+                    headers = Parser(policy=default).parsestr(str(msg))["subject"]
+                    if headers in dic_received :
+                        dic_received[headers] = True
+            imap.store(mail, "+FLAGS", "\\Deleted")
     imap.expunge()
     # close the mailbox
     imap.close()
     # logout from the account
     imap.logout()
-    res = ""
-    for subject in list_received :
-        if subject in headers :
-            res += "{} : reçu\n".format(subject)
+    res = "----------------------\nMails received by {} :\n".format(dst)
+    for key in dic_received.keys() :
+        if dic_received[key] :
+            res += "{} : reçu\n".format(key)
         else :
-            res += "{} : non reçu\n".format(subject)
+            res += "{} : non reçu\n".format(key)
     print(res)
 			
