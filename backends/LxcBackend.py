@@ -205,21 +205,21 @@ class LxcHost(LxcBackend, Host):
 
         c.save_config()
 
-    def mail(self, action):
+    def mail(self, action, mailToken):
         c = self.getContainer()
         miname = self.name
         path = self.folder
         if action=="send":
-            scriptname="/send_mail.sh"
+            scriptname="/smtp.py"
         elif action=="receive":
-            scriptname="/receive_mail.sh"
+            scriptname="/imap.py"
         else:
             raise TypeError("mail takes 'send' or 'receive' as argument")
-        filesdir = os.path.dirname(os.path.realpath(sys.modules['__main__'].__file__)) + "/" + path + scriptname
+        filesdir = os.path.dirname(os.path.realpath(sys.modules['__main__'].__file__)) + "/mailscript/" + miname + scriptname
         try:
-            ret = c.attach_wait(lxc.attach_run_command,["env"] + ["MILXCGUARD=TRUE", "HOSTLANG=" + os.getenv("LANG")]
-                                + [getInterpreter(filesdir), "/mnt/lxc/" + path + scriptname],env_policy=lxc.LXC_ATTACH_CLEAR_ENV)
-            if ret != 0:
+            ret = c.attach_wait(lxc.attach_run_command,["env"] + ["MILXCGUARD=TRUE", "HOSTLANG=" + os.getenv("LANG"), "MAILTOKEN=" + mailToken]
+                                + [getInterpreter(filesdir), "/mnt/lxc/mailscript/" + miname + scriptname],env_policy=lxc.LXC_ATTACH_CLEAR_ENV)
+            if ret != 0 :
                 print("\033[31mMail of  " + path + " failed (" + str(ret) + "), exiting...\033[0m")
                 exit(1)
         except FileNotFoundError:
