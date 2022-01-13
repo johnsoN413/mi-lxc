@@ -1,1 +1,86 @@
-pfe branch
+Configuration du mail : 
+Sur postfix il faut modifier les ports d'entrées et de sorties ! Il ne faut pas utiliser le même port pour communiquer avec les MUA que pour communiquer avec MTA/MDA. On veut utiliser le port 25 pour communiquer entre server et le port 587 pour communiquer avec les clients. 
+Pour cela on fait : 
+
+On décommente la ligne `submission inet n - n - - smtpd` dans **master.cf**. Cela permet d'activer le port 587 en soumission (submission).  Mais le problème est que on peut toujours communiquer et envoyer des mails sur ce port. 
+
+
+On veut modifier les interfaces autorisées à envoyer des mails, en revanche avec notre configuration actuelle il ne faut rien changer car on ne peut pas isoler depuis **infra** nos machines de l'extérieur.
+
+```
+postconf -e inet_interfaces=all 
+```
+
+Tout le monde peut communiquer avec notre serveur de mail malheureusement. 
+
+On veut aussir parametrer **mynetworkss**  on veut uniquement mettre les adresses nous appartenant, ces adresses auront plus de privilèges que celles qui n'y sont pas. En revanche sans modifications supplémentaires, rien n'interdit les clients extérieurs à communiquer avec notre serveur. 
+
+
+```
+postconf -e mynetworks="127.0.0.0/8"
+```
+
+Il ne faut pas oublier de rajouter aussi les réseaux interne. (100.120.0.0/24 pour isp-a par exemple)
+
+On doit aussi modifier **mydestinations** pour eviter d'être un openrelay. Mais c'est déjà fait par défaut donc on va laisser ca en place pour l'instant.
+
+On veut que les serveurs nous disent bonjour donc on va obliger ces dernier à commencer par **HELO**
+
+```
+postconf -e smtpd_helo_required=yes
+```
+
+On va maintenant parametrer le **relayhost**. Cela nous permet d'utiliser le port 587 comme port pour communiquer avec le client.  
+
+```
+postconf -e relayhost="[mail.isp-a.milxc]:587"
+```
+
+Dans main.cf on rajouter ces configurations la : 
+
+```
+smtpd_helo_required = yes
+mua_sender_restrictions = hash:/etc/postfix/access, reject
+mua_client_restrictions = permit_mynetworks, reject 
+```
+
+On autorise uniquement les noms de domaines listés dans `/etc/postfix/access` 
+
+```
+isp-a.milxc OK
+```
+
+Il ne faut pas oublier de faire : `postmap /etc/postfix/access`
+
+Dans master.cf  : 
+
+```
+    -o smtpd_reject_unlisted_recipient=no
+    -o smtpd_client_restrictions=$mua_client_restrictions
+    -o smtpd_sender_restrictions=$mua_sender_restrictions
+```
+On peut maintenant envoyer des mails directement au serveur sur le port 587 que depuis le réseau interne ! On peut toujours usurpere les adresses mails en revanche c'est à regarder plus en détails. 
+
+Maintenant, on veut sécuriser le port 25 pour n'autoriser que les serveurs noté comme tel par les DNS.
+
+# SPF 
+
+Maintenant que notre serveur est presque bien configuré, nous allons configuré **SPF** pour augmenter encore la sécurité. **SPF** est utile pour vérifier qu'un mail utilise un nom de domaine qu'il a le droit d'utiliser. Pour cela, on implémente une politique SPF qui va associer un nom de domaine et des adresses IP. Ainsi, si un mail comportant le nom de domaine **target.milxc** est utilisé, on va vérifier en regardant la politique SPF que celui qui envoie est bien autorisé par cette dernière. 
+
+On rajoute cette ligne dans **master.cf** : 
+
+```
+policyd-spf  unix  -       n       n       -       0       spawn
+    user=policyd-spf argv=/usr/bin/policyd-spf
+```
+
+Et on modifie **main.cf** comme ci dessous : 
+
+```
+policyd-spf_time_limit = 3600
+smtpd_recipient_restrictions =
+   permit_mynetworks,
+   permit_sasl_authenticated,
+   reject_unauth_destination,
+   check_policy_service unix:private/policyd-spf
+```
