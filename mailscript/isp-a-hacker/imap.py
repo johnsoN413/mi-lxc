@@ -5,6 +5,7 @@ from mail import receive_mails
 
 token =  os.environ.get('MAILTOKEN')
 
-hacker_subjects = [token+' Test 1 source = hacker', token+' Test 2 source = hacker', token+' Test 4 source = hacker', token+' Test 5 source = hacker']
+hacker_messages = [[token+' Test 2 from user','Email usuel : doit être reçu\nFrom : user@gcorp.milxc\nTo : hacker@isp-a.milxc\nServeur : gcorp.milxc\nMachine : gcorp.user',False],
+[token+' Test 1 from admin','Email usuel : doit être reçu\nFrom : admin@target.milxc\nTo : hacker@isp-a.milxc\nServeur: target.milxc\nMachine : target.admin',False]]
 
-mails = receive_mails("imap.isp-a.milxc", "hacker", "hacker", hacker_subjects, "isp-a-hacker")
+mails = receive_mails("imap.isp-a.milxc", "hacker", "hacker", hacker_messages, "isp-a-hacker")

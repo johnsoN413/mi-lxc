@@ -5,10 +5,6 @@ from mail import send_mail
 
 token =  os.environ.get('MAILTOKEN')
 
-send_mail('smtp.gcorp.milxc', 'User<user@gcorp.milxc>', ['user@gcorp.milxc'], token+' Test 1 source = user','SMTP : gcorp. user to user')
-send_mail('smtp.target.milxc', 'User<user@gcorp.milxc>', ['user@gcorp.milxc'], token+' Test 2 source = user','SMTP : target. user to user')
-send_mail('smtp.gcorp.milxc', 'User<user@gcorp.milxc>', ['admin@target.milxc'], token+' Test 3 source = user','SMTP : gcorp. user to admin')
-send_mail('smtp.gcorp.milxc', 'Admin<admin@target.milxc>', ['user@gcorp.milxc'], token+' Test 4 source = user','SMTP : gcorp. admin to user')
-send_mail('smtp.target.milxc', 'Admin<admin@target.milxc>', ['user@gcorp.milxc'], token+' Test 5 source = user','SMTP : target. admin to user')
-
+send_mail('smtp.gcorp.milxc', 587, 'User<user@gcorp.milxc>', ['admin@target.milxc'],token+' Test 1 from user','Email usuel : doit être reçu\nFrom : user@gcorp.milxc\nTo : admin@target.milxc\nServeur : gcorp.milxc\nMachine : gcorp.user')
+send_mail('smtp.gcorp.milxc', 587, 'User<user@gcorp.milxc>', ['hacker@isp-a.milxc'],token+' Test 2 from user','Email usuel : doit être reçu\nFrom : user@gcorp.milxc\nTo : hacker@isp-a.milxc\nServeur : gcorp.milxc\nMachine : gcorp.user')
 print("Mails sent from gcorp-user")

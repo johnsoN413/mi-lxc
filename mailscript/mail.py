@@ -11,14 +11,14 @@ import time
 
 def checked(dic) :
     for value in dic.values() :
-        if not value :
+        if not value[1] :
             return False
     return True
 
 
-def send_mail(smtpServ, fromaddr, toaddrs, subject, body):
+def send_mail(smtpServ, port, fromaddr, toaddrs, subject, body):
     server = smtplib.SMTP()
-    server.connect(smtpServ)
+    server.connect(smtpServ, port)
     server.helo() 
     msg = MIMEText(body)
     msg['Subject'] = subject
@@ -35,7 +35,7 @@ def send_mail(smtpServ, fromaddr, toaddrs, subject, body):
 def receive_mails(smtpServ, login, password, list_received, dst):
     dic_received = {}
     for key in list_received :
-        dic_received[key] = False
+        dic_received[key[0]] = [key[1], False, key[2]]
     try:
         imap = imaplib.IMAP4(host=smtpServ, port=143)
     except Exception as e:
@@ -57,18 +57,21 @@ def receive_mails(smtpServ, login, password, list_received, dst):
                     msg = email.message_from_bytes(response[1])
                     headers = Parser(policy=default).parsestr(str(msg))["subject"]
                     if headers in dic_received :
-                        dic_received[headers] = True
+                        dic_received[headers][1] = True
+                        dic_received[headers][2] = not dic_received[headers][2]
             imap.store(mail, "+FLAGS", "\\Deleted")
     imap.expunge()
     # close the mailbox
     imap.close()
     # logout from the account
     imap.logout()
-    res = "----------------------\nMails received by {} :\n".format(dst)
     for key in dic_received.keys() :
-        if dic_received[key] :
-            res += "{} : reçu\n".format(key)
+        if dic_received[key][1] :
+            res = "V"
         else :
-            res += "{} : non reçu\n".format(key)
-    print(res)
+            res = "X"
+        if dic_received[key][1] :
+            print("----------------------\n"+res+" RECU :\n{}".format(dic_received[key][0]))
+        else :
+            print("----------------------\n"+res+" NON RECU :\n{}".format(dic_received[key][0]))
 			
