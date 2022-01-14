@@ -27,6 +27,7 @@ def send_mail(smtpServ, port, fromaddr, toaddrs, subject, body):
     try:
         server.sendmail(fromaddr, toaddrs, msg.as_string())
     except smtplib.SMTPException as e:
+        print("1 mail depuis hacker non envoyé :")
         print(e)
     server.quit()
     return
