@@ -58,7 +58,6 @@ def receive_mails(smtpServ, login, password, list_received, dst):
                     headers = Parser(policy=default).parsestr(str(msg))["subject"]
                     if headers in dic_received :
                         dic_received[headers][1] = True
-                        dic_received[headers][2] = not dic_received[headers][2]
             imap.store(mail, "+FLAGS", "\\Deleted")
     imap.expunge()
     # close the mailbox
@@ -66,7 +65,9 @@ def receive_mails(smtpServ, login, password, list_received, dst):
     # logout from the account
     imap.logout()
     for key in dic_received.keys() :
-        if dic_received[key][1] :
+        dic_received[key][2] = dic_received[key][1] ^ dic_received[key][2]
+        res = ""
+        if dic_received[key][2] :
             res = "V"
         else :
             res = "X"
