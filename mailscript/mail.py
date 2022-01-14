@@ -51,14 +51,17 @@ def receive_mails(smtpServ, login, password, list_received, dst):
         messages = messages[0].split(b' ')
         
         for mail in messages:
-            _, msg = imap.fetch(mail, "(RFC822)")
-            for response in msg:
-                if isinstance(response, tuple):
-                    msg = email.message_from_bytes(response[1])
-                    headers = Parser(policy=default).parsestr(str(msg))["subject"]
-                    if headers in dic_received :
-                        dic_received[headers][1] = True
-            imap.store(mail, "+FLAGS", "\\Deleted")
+            try :
+                _, msg = imap.fetch(mail, "(RFC822)")
+                for response in msg:
+                    if isinstance(response, tuple):
+                        msg = email.message_from_bytes(response[1])
+                        headers = Parser(policy=default).parsestr(str(msg))["subject"]
+                        if headers in dic_received :
+                            dic_received[headers][1] = True
+                imap.store(mail, "+FLAGS", "\\Deleted")
+            except imaplib.IMAP4.error:
+                pass
     imap.expunge()
     # close the mailbox
     imap.close()
