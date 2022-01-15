@@ -15,17 +15,22 @@ import random
 
 
 class MailThread (threading.Thread):
-    def __init__(self, host, event, mailToken, cmd):
+    def __init__(self, host, cmd, mail):
         threading.Thread.__init__(self)
         self.host = host
-        self.event = event
-        self.mailToken = mailToken
         self.cmd = cmd
+        self.mail = mail
 
     def run(self):
-        self.host.mail(self.cmd, self.mailToken)
-        self.event.set()
+        self.host.mail(self.cmd, self.mail)
 
+def parseMails() :
+    with open("mailscript/scenarii.json", "r") as f :
+        mails = json.load(f)
+    res = []
+    for mail in mails :
+        res.append(mails[mail])
+    return res
 
 def flushArp():
     os.system("ip neigh flush dev " + lxcbr)
@@ -331,47 +336,37 @@ def renetInfra():
     print("Infrastructure reneted successfully !")
 
 def mail():
-    mailToken = str(random.random())[2:]
+    dic_host = {"admin@target.milxc":"target-admin", "hacker@isp-a.milxc":"isp-a-hacker", "user@gcorp.milxc":"gcorp-user"}
     events = []
-    for host in hosts:
-        if host is None:
-            print("Unexisting container " + host.name + ", valid containers are " + listHosts(), file=sys.stderr) # a réécrire
+    mails = parseMails()
+    for mail in mails :
+        hostname_sender = mail["Container"]
+        mailToken = str(random.random())[2:]
+        mail["Subject"] = mailToken+"_"+mail["Subject"]
+        try :
+            hostname_receiver = dic_host[mail["To"]]
+        except KeyError :
+            print("Adress " + mail["To"] + " not defined, valid adresses are " + ", ".join(dic_host.keys())) # a réécrire
             exit(1)
-        if not host.isRunning():
-            print("Container " + host.name + " is not running. You need to run \"./mi-lxc.py start\" before sending mails", file=sys.stderr)
+        host_sender = getHost(hostname_sender)
+        host_receiver = getHost(hostname_receiver)
+        if host_sender is None:
+            print("Unexisting container " + hostname_sender + ", valid containers are " + listHosts(), file=sys.stderr) # a réécrire
             exit(1)
-        if not host.exists():
-            print("Host " + host.name + " does not exist", file=sys.stderr) # a réécrire
+        if not host_sender.isRunning():
+            print("Container " + host_sender.name + " is not running. You need to run \"./mi-lxc.py start\" before sending mails", file=sys.stderr)
             exit(1)
-        else:
-            event = threading.Event()
-            event.clear()
-            events.append(event)
-            m = MailThread(host, event, mailToken, "send")
-            m.start()
+        if host_receiver is None:
+            print("Adress " + mail["To"] + " not defined, valid adresses are " + ", ".join(dic_host.keys())) # a réécrire
+            exit(1)
+        if not host_receiver.isRunning():
+            print("Container " + host_receiver.name + " is not running. You need to run \"./mi-lxc.py start\" before sending mails", file=sys.stderr)
+            exit(1)
 
-    for event in events :
-        event.wait()
-
-    for host in hosts:
-        if host is None:
-            print("Unexisting container " + host.name + ", valid containers are " + listHosts(), file=sys.stderr) # a réécrire
-            exit(1)
-        if not host.isRunning():
-            print("Container " + host.name + " is not running. You need to run \"./mi-lxc.py start\" before sending mails", file=sys.stderr)
-            exit(1)
-        if not host.exists():
-            print("Host " + host.name + " does not exist", file=sys.stderr) # a réécrire
-            exit(1)
-        else:
-            event = threading.Event()
-            event.clear()
-            events.append(event)
-            m = MailThread(host, event, mailToken, "receive")
-            m.start()
-
-    for event in events :
-        event.wait()
+        m = MailThread(host_sender, "send", mail)
+        m.start()
+        m = MailThread(host_receiver, "receive", mail)
+        m.start()
 
 def destroyInfra():
     for host in hosts:
@@ -473,7 +468,7 @@ def usage():
 ./mi-lxc.py should be followed by:
     create [name]                    creates the [name] container, defaults to create all containers
     renet                            renets all the containers
-    mail                             send mails between those who can (in dev)
+    mail                             send mails defined in mailscript/scenarios.txt
     destroy [name]                   destroys the [name] container, defaults to destroy all containers
     destroymaster                    destroys all the master containers
     updatemaster                     updates all the master containers

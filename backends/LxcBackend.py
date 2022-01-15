@@ -7,6 +7,7 @@ import lxc
 import ipaddress
 import os
 import sys
+import json
 
 def getInterpreter(file):
     script = open(file)
@@ -205,22 +206,14 @@ class LxcHost(LxcBackend, Host):
 
         c.save_config()
 
-    def mail(self, action, mailToken):
+    def mail(self, action, mail):
         c = self.getContainer()
-        miname = self.name
-        path = self.folder
-        if action=="send":
-            scriptname="/smtp.py"
-        elif action=="receive":
-            scriptname="/imap.py"
-        else:
-            raise TypeError("mail takes 'send' or 'receive' as argument")
-        filesdir = os.path.dirname(os.path.realpath(sys.modules['__main__'].__file__)) + "/mailscript/" + miname + scriptname
+        filesdir = os.path.dirname(os.path.realpath(sys.modules['__main__'].__file__)) + "/mailscript/" + action + ".py"
         try:
-            ret = c.attach_wait(lxc.attach_run_command,["env"] + ["MILXCGUARD=TRUE", "HOSTLANG=" + os.getenv("LANG"), "MAILTOKEN=" + mailToken]
-                                + [getInterpreter(filesdir), "/mnt/lxc/mailscript/" + miname + scriptname],env_policy=lxc.LXC_ATTACH_CLEAR_ENV)
+            ret = c.attach_wait(lxc.attach_run_command,["env"] + ["MILXCGUARD=TRUE", "HOSTLANG=" + os.getenv("LANG")]
+                                + [getInterpreter(filesdir), "/mnt/lxc/mailscript/" + action + ".py", json.dumps(mail)],env_policy=lxc.LXC_ATTACH_CLEAR_ENV)
             if ret != 0 :
-                print("\033[31mMail of  " + path + " failed (" + str(ret) + "), exiting...\033[0m")
+                print("\033[31mMail of  " + self.name + " failed (" + str(ret) + "), exiting...\033[0m")
                 exit(1)
         except FileNotFoundError:
             pass
