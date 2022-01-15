@@ -1,0 +1,23 @@
+{
+"mail1" : {
+	"Server" : "smtp.isp-a.milxc",
+	"ServerPort" : 587,
+	"From" : "Hacker<hacker@isp-a.milxc>",
+	"To" : "admin@target.milxc",
+	"Subject" : "Test 1",
+	"Body" : "Email usuel depuis hacker vers admin, doit réussir.",
+	"Container" : "isp-a-hacker",
+	"ShouldPass" : true
+	},
+
+"mail2" : {
+	"Server" : "smtp.target.milxc",
+	"ServerPort" : 587,
+	"From" : "Hacker<hacker@isp-a.milxc>",
+	"To" : "user@gcorp.milxc",
+	"Subject" : "Test 2",
+	"Body" : "Email utilisant un autre nom de domaine que celui du serveur utilisé, ne doit pas réussir",
+	"Container" : "target-admin",
+	"ShouldPass" : false
+	}
+}
