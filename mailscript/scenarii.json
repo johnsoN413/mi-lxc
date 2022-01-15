@@ -5,31 +5,31 @@
 	"From" : "Hacker<hacker@isp-a.milxc>",
 	"To" : "admin@target.milxc",
 	"Subject" : "Test 1",
-	"Body" : "Email usuel depuis hacker vers admin, doit réussir.",
+	"Body" : "Email usuel : Hacker vers Admin, doit réussir.",
 	"Container" : "isp-a-hacker",
 	"ShouldPass" : true
 	},
 
 "mail2" : {
-	"Server" : "smtp.gcorp.milxc",
+	"Server" : "smtp.isp-a.milxc",
 	"ServerPort" : 587,
-	"From" : "User<user@gcorp.milxc>",
-	"To" : "admin@target.milxc",
+	"From" : "Hacker<hacker@isp-a.milxc>",
+	"To" : "user@gcorp.milxc",
 	"Subject" : "Test 2",
-	"Body" : "Email usuel : doit être reçu",
-	"Container" : "gcorp-user",
+	"Body" : "Email usuel : Hacker vers User, doit réussir.",
+	"Container" : "isp-a-hacker",
 	"ShouldPass" : true
 	},
 
 "mail3" : {
-	"Server" : "smtp.target.milxc",
+	"Server" : "smtp.gcorp.milxc",
 	"ServerPort" : 587,
-	"From" : "Hacker<hacker@isp-a.milxc>",
-	"To" : "user@gcorp.milxc",
+	"From" : "User<user@gcorp.milxc>",
+	"To" : "admin@target.milxc",
 	"Subject" : "Test 3",
-	"Body" : "Email utilisant un autre nom de domaine que celui du serveur utilisé, ne doit pas réussir",
-	"Container" : "target-admin",
-	"ShouldPass" : false
+	"Body" : "Email usuel : User vers Admin, doit réussir",
+	"Container" : "gcorp-user",
+	"ShouldPass" : true
 	},
 
 "mail4" : {
@@ -38,8 +38,85 @@
 	"From" : "User<user@gcorp.milxc>",
 	"To" : "hacker@isp-a.milxc",
 	"Subject" : "Test 4",
-	"Body" : "Email usuel : doit être reçu",
+	"Body" : "Email usuel : User vers Hacker, doit réussir",
 	"Container" : "gcorp-user",
 	"ShouldPass" : true
+	},
+
+"mail5" : {
+	"Server" : "smtp.target.milxc",
+	"ServerPort" : 587,
+	"From" : "Admin<admin@target.milxc>",
+	"To" : "hacker@isp-a.milxc",
+	"Subject" : "Test 5",
+	"Body" : "Email usuel : Admin vers Hacker, doit réussir",
+	"Container" : "target-admin",
+	"ShouldPass" : true
+	},
+
+"mail6" : {
+	"Server" : "smtp.target.milxc",
+	"ServerPort" : 587,
+	"From" : "Admin<admin@target.milxc>",
+	"To" : "user@gcorp.milxc",
+	"Subject" : "Test 6",
+	"Body" : "Email usuel : Admin vers User, doit réussir",
+	"Container" : "target-admin",
+	"ShouldPass" : true
+	},
+
+"mail7" : {
+	"Server" : "smtp.target.milxc",
+	"ServerPort" : 587,
+	"From" : "Admin<admin@target.milxc>",
+	"To" : "user@gcorp.milxc",
+	"Subject" : "Test 1",
+	"Body" : "Email malveillant : Hacker cherche à se faire passer pour Admin en usurpant son adresse mail et en se connectant directement au serveur mail de target, ne doit pas réussir",
+	"Container" : "isp-a-hacker",
+	"ShouldPass" : false
+	},
+
+"mail8" : {
+	"Server" : "smtp.isp-a.milxc",
+	"ServerPort" : 587,
+	"From" : "Admin<admin@target.milxc>",
+	"To" : "user@gcorp.milxc",
+	"Subject" : "Test 2",
+	"Body" : "Email malveillant : Hacker cherche à se faire passer pour Admin en usurpant son adresse mail et en se connectant à son propre serveur mail, ne doit pas réussir",
+	"Container" : "isp-a-hacker",
+	"ShouldPass" : false
+	},
+
+"mail9" : {
+	"Server" : "smtp.target.milxc",
+	"ServerPort" : 25,
+	"From" : "Hacker<hacker@isp-a.milxc>",
+	"To" : "user@gcorp.milxc",
+	"Subject" : "Test 3",
+	"Body" : "Email malveillant : Hacker utilise le serveur mail de target comme un open relay, ne doit pas réussir",
+	"Container" : "isp-a-hacker",
+	"ShouldPass" : false
+	},
+
+"mail10" : {
+	"Server" : "smtp.target.milxc",
+	"ServerPort" : 25,
+	"From" : "Hacker<hacker@isp-a.milxc>",
+	"To" : "admin@target.milxc",
+	"Subject" : "Test 4",
+	"Body" : "Email malveillant : Hacker se connecte sur le port 25 pour envoyer des mails en interne, ne doit pas réussir",
+	"Container" : "isp-a-hacker",
+	"ShouldPass" : false
+	},
+
+"mail11" : {
+	"Server" : "smtp.target.milxc",
+	"ServerPort" : 587,
+	"From" : "Hacker<hacker@isp-a.milxc>",
+	"To" : "user@gcorp.milxc",
+	"Subject" : "Test 5",
+	"Body" : "Email malveillant : Admin cherche à usurper l'adresse mail de Hacker qui utilise un autre nom de domaine que celui du serveur utilisé, ne doit pas réussir",
+	"Container" : "target-admin",
+	"ShouldPass" : false
 	}
 }
