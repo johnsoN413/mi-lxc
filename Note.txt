@@ -67,6 +67,8 @@ Maintenant, on veut sécuriser le port 25 pour n'autoriser que les serveurs not�
 
 Maintenant que notre serveur est presque bien configuré, nous allons configuré **SPF** pour augmenter encore la sécurité. **SPF** est utile pour vérifier qu'un mail utilise un nom de domaine qu'il a le droit d'utiliser. Pour cela, on implémente une politique SPF qui va associer un nom de domaine et des adresses IP. Ainsi, si un mail comportant le nom de domaine **target.milxc** est utilisé, on va vérifier en regardant la politique SPF que celui qui envoie est bien autorisé par cette dernière. 
 
+On va utiliser policyd-spf en python, il faut l'installer avant la suite. 
+
 On rajoute cette ligne dans **master.cf** : 
 
 ```
@@ -79,8 +81,12 @@ Et on modifie **main.cf** comme ci dessous :
 ```
 policyd-spf_time_limit = 3600
 smtpd_recipient_restrictions =
-   permit_mynetworks,
-   permit_sasl_authenticated,
    reject_unauth_destination,
    check_policy_service unix:private/policyd-spf
+```
+
+On modifie le fichier de zone en rajoutant simplement cette ligne. Et il faut restart **nsd**.
+
+```
+IN TXT "v=spf1 mx -all"
 ```
