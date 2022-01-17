@@ -29,11 +29,17 @@ dic_logs = {
 
 try:
     imap = imaplib.IMAP4(host="imap."+mailSent["To"].split("@")[1], port=143)
-except Exception as e:
-    print("ErrorType : {}, Error : {}".format(type(e).__name__, e))
+except Exception :
+    print("\033[30;41mFailure, maybe wait a few seconds and retry while the mailservers are starting.\033[0m")
     imap = None
+    exit(1)
 
-imap.login(dic_logs[mailSent["To"]][0], dic_logs[mailSent["To"]][1])
+try :
+    imap.login(dic_logs[mailSent["To"]][0], dic_logs[mailSent["To"]][1])
+except imaplib.IMAP4.error :
+    print("\033[30;41mCould not login to {}.\033[0m".format(mailSent["To"]))
+    exit(1)
+    
 imap.select('INBOX')
 t = time.time()
 
@@ -62,12 +68,14 @@ imap.logout()
 test_succeded = received == mailSent["ShouldPass"]
 if test_succeded :
     res = "V"
+    color = "\033[92m"
 else :
     res = "X"
+    color = "\033[31m"
 if received :
-    print("----------------------\n"+res+" RECU :\n{}".format(render_dic(mailSent)))
+    print("----------------------\n"+color+res+" RECU :\n{}\033[0m".format(render_dic(mailSent)))
 else :
-    print("----------------------\n"+res+" NON RECU :\n{}".format(render_dic(mailSent)))
+    print("----------------------\n"+color+res+" NON RECU :\n{}\033[0m".format(render_dic(mailSent)))
 
 
 			

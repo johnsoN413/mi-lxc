@@ -213,7 +213,7 @@ class LxcHost(LxcBackend, Host):
             ret = c.attach_wait(lxc.attach_run_command,["env"] + ["MILXCGUARD=TRUE", "HOSTLANG=" + os.getenv("LANG")]
                                 + [getInterpreter(filesdir), "/mnt/lxc/mailscript/" + action + ".py", json.dumps(mail)],env_policy=lxc.LXC_ATTACH_CLEAR_ENV)
             if ret != 0 :
-                print("\033[31mMail of  " + self.name + " failed (" + str(ret) + "), exiting...\033[0m")
+                print("\033[30;41mMail of  " + self.name + " failed (" + str(ret) + "), exiting...\033[0m")
                 exit(1)
         except FileNotFoundError:
             pass

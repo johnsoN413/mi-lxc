@@ -17,8 +17,11 @@ mail = json.loads(sys.argv[1])
 try :
     server.connect(mail["Server"], mail["ServerPort"])
 except ConnectionRefusedError :
-    print("Connexion refusée, essayez d'activer le port 587")
-    exit(1)
+    if mail["ServerPort"]==587 :
+       print("----------------------\n\033[30;41mConnexion à {} refusée, avez-vous activé le port 587 ?\033[0m".format(mail["Server"]))
+       exit(0)
+    print("----------------------\n\033[30;41mConnexion à {} refusée.\033[0m".format(mail["Server"]))
+    exit(0)
 
 server.helo() 
 msg = MIMEText(mail["Body"])
@@ -29,6 +32,7 @@ msg['To'] = mail["To"]
 try:
     server.sendmail(mail["From"], mail["To"], msg.as_string())
 except smtplib.SMTPException as e:
+    print("----------------------\n\033[30;41mEnvoi du mail '{}' refusé depuis {}\033[0m".format(mail["Subject"], mail["Container"]))
     print(e)
 
 server.quit()
