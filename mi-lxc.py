@@ -374,6 +374,7 @@ def mail():
         else :
             dic_mails_receive[host_receiver] = [mail]
     events = []
+    print("Sending mails...")
     for sender in dic_mails_send.keys() :
         e = threading.Event()
         m = MailThread(sender, "send", dic_mails_send[sender], e)
