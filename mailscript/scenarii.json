@@ -118,5 +118,16 @@
 	"Body" : "Email malveillant : Admin cherche à usurper l'adresse mail de Hacker qui utilise un autre nom de domaine que celui du serveur utilisé, ne doit pas réussir",
 	"Container" : "target-admin",
 	"ShouldPass" : false
+	},
+
+"mail12" : {
+	"Server" : "smtp.isp-a.milxc",
+	"ServerPort" : 587,
+	"From" : "User<user@gcorp.milxc>",
+	"To" : "admin@target.milxc",
+	"Subject" : "Test 6",
+	"Body" : "Email malveillant : Hacker cherche à se faire passer pour User en usurpant son adresse mail et en se connectant à son propre serveur mail, ne doit pas réussir",
+	"Container" : "isp-a-hacker",
+	"ShouldPass" : false
 	}
 }
