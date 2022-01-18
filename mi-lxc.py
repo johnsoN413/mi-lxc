@@ -15,14 +15,15 @@ import random
 
 
 class MailThread (threading.Thread):
-    def __init__(self, host, cmd, mail):
+    def __init__(self, host, cmd, mail, event):
         threading.Thread.__init__(self)
         self.host = host
         self.cmd = cmd
         self.mail = mail
-
+        self.event = event
     def run(self):
         self.host.mail(self.cmd, self.mail)
+        self.event.set()
 
 def parseMails() :
     with open("mailscript/scenarii.json", "r") as f :
@@ -339,6 +340,8 @@ def mail():
     dic_host = {"admin@target.milxc":"target-admin", "hacker@isp-a.milxc":"isp-a-hacker", "user@gcorp.milxc":"gcorp-user"}
     events = []
     mails = parseMails()
+    dic_mails_send = {}
+    dic_mails_receive = {}
     for mail in mails :
         hostname_sender = mail["Container"]
         mailToken = str(random.random())[2:]
@@ -362,10 +365,26 @@ def mail():
         if not host_receiver.isRunning():
             print("Container " + host_receiver.name + " is not running. You need to run \"./mi-lxc.py start\" before sending mails", file=sys.stderr)
             exit(1)
-
-        m = MailThread(host_sender, "send", mail)
+        if host_sender in dic_mails_send.keys() :
+            dic_mails_send[host_sender].append(mail)
+        else :
+            dic_mails_send[host_sender] = [mail]
+        if host_receiver in dic_mails_receive.keys() :
+            dic_mails_receive[host_receiver].append(mail)
+        else :
+            dic_mails_receive[host_receiver] = [mail]
+    events = []
+    print("Sending mails...")
+    for sender in dic_mails_send.keys() :
+        e = threading.Event()
+        m = MailThread(sender, "send", dic_mails_send[sender], e)
         m.start()
-        m = MailThread(host_receiver, "receive", mail)
+        events.append(e)
+    for e in events :
+        e.wait()
+    for receiver in dic_mails_receive.keys() :
+        e = threading.Event()
+        m = MailThread(receiver, "receive", dic_mails_receive[receiver], e)
         m.start()
 
 def destroyInfra():
