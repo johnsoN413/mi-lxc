@@ -218,6 +218,18 @@ class LxcHost(LxcBackend, Host):
         except FileNotFoundError:
             pass
 
+    def check_mail_logs(self, mails):
+        c = self.getContainer()
+        filesdir = os.path.dirname(os.path.realpath(sys.modules['__main__'].__file__)) + "/mailscript/logs.py"
+        try:
+            ret = c.attach_wait(lxc.attach_run_command,["env"] + ["MILXCGUARD=TRUE", "HOSTLANG=" + os.getenv("LANG")]
+                                + [getInterpreter(filesdir), "/mnt/lxc/mailscript/logs.py", json.dumps(mails)],env_policy=lxc.LXC_ATTACH_CLEAR_ENV)
+            if ret != 0 :
+                print("\033[30;41mChecking mail logs of  " + self.name + " failed (" + str(ret) + "), exiting...\033[0m")
+                exit(1)
+        except FileNotFoundError:
+            pass
+
     def renet(self):
         c = self.getContainer()
 

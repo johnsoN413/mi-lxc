@@ -21,7 +21,7 @@ for mail in mails :
             print("----------------------\n\033[30;41mConnexion à {} refusée, avez-vous activé le port 587 ?\033[0m".format(mail["Server"]))
             exit(0)
         print("----------------------\n\033[30;41mConnexion à {} refusée.\033[0m".format(mail["Server"]))
-        exit(0)
+        exit(1)
 
     server.helo() 
     msg = MIMEText(mail["Body"])

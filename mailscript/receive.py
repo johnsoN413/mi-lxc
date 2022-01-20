@@ -15,7 +15,7 @@ def render_dic(dic) :
     res = ""
     for key in dic.keys() :
         res = res+key+" : "+str(dic[key])+"\n"
-    return res[:-1]
+    return res[:-1]      
 
 dic_logs = {
     "admin@target.milxc":["admin","admin"],
@@ -49,7 +49,7 @@ for mailSent in mailsSent :
         
         status, messages = imap.search(None, "ALL")
         messages = messages[0].split(b' ')
-    
+
         for mail in messages:
             try :
                 _, msg = imap.fetch(mail, "(RFC822)")
@@ -60,6 +60,7 @@ for mailSent in mailsSent :
                         if subject == mailSent["Subject"] :
                             received = True
                             imap.store(mail, "+FLAGS", "\\Deleted")
+                                
             except imaplib.IMAP4.error:
                 pass
     imap.expunge()
@@ -78,6 +79,5 @@ for mailSent in mailsSent :
         print("----------------------\n"+color+res+" RECU :\n{}\033[0m".format(render_dic(mailSent)))
     else :
         print("----------------------\n"+color+res+" NON RECU :\n{}\033[0m".format(render_dic(mailSent)))
-
 
 			

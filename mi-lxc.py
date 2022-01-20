@@ -338,21 +338,25 @@ def renetInfra():
 
 def mail():
     dic_host = {"admin@target.milxc":"target-admin", "hacker@isp-a.milxc":"isp-a-hacker", "user@gcorp.milxc":"gcorp-user"}
+    dic_log = {"admin@target.milxc":"target-dmz", "hacker@isp-a.milxc":"isp-a-infra", "user@gcorp.milxc":"gcorp-infra"}
     events = []
     mails = parseMails()
     dic_mails_send = {}
     dic_mails_receive = {}
+    dic_mails_log = {}
     for mail in mails :
         hostname_sender = mail["Container"]
         mailToken = str(random.random())[2:]
         mail["Subject"] = mailToken+"_"+mail["Subject"]
         try :
             hostname_receiver = dic_host[mail["To"]]
+            hostname_log = dic_log[mail["To"]]
         except KeyError :
             print("Adress " + mail["To"] + " not defined, valid adresses are " + ", ".join(dic_host.keys())) # a réécrire
             exit(1)
         host_sender = getHost(hostname_sender)
         host_receiver = getHost(hostname_receiver)
+        host_log = getHost(hostname_log)
         if host_sender is None:
             print("Unexisting container " + hostname_sender + ", valid containers are " + listHosts(), file=sys.stderr) # a réécrire
             exit(1)
@@ -365,6 +369,12 @@ def mail():
         if not host_receiver.isRunning():
             print("Container " + host_receiver.name + " is not running. You need to run \"./mi-lxc.py start\" before sending mails", file=sys.stderr)
             exit(1)
+        if host_log is None:
+            print("Adress " + mail["To"] + " not defined, valid adresses are " + ", ".join(dic_log.keys())) # a réécrire
+            exit(1)
+        if not host_log.isRunning():
+            print("Container " + host_log.name + " is not running. You need to run \"./mi-lxc.py start\" before sending mails", file=sys.stderr)
+            exit(1)
         if host_sender in dic_mails_send.keys() :
             dic_mails_send[host_sender].append(mail)
         else :
@@ -373,6 +383,10 @@ def mail():
             dic_mails_receive[host_receiver].append(mail)
         else :
             dic_mails_receive[host_receiver] = [mail]
+        if host_log in dic_mails_log.keys() :
+            dic_mails_log[host_log].append(mail)
+        else :
+            dic_mails_log[host_log] = [mail]
     events = []
     print("Sending mails...")
     for sender in dic_mails_send.keys() :
@@ -386,6 +400,8 @@ def mail():
         e = threading.Event()
         m = MailThread(receiver, "receive", dic_mails_receive[receiver], e)
         m.start()
+    for server in dic_mails_log.keys() :
+        server.check_mail_logs(dic_mails_log[server])
 
 def destroyInfra():
     for host in hosts:
